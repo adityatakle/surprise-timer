@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Countdown</title>
+    <style>
+        /* Base styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            font-family: 'Arial', sans-serif;
+            color: #ff4d4d;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Timer container */
+        .countdown-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Timer circle background and animation */
+        .countdown-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff4d4d calc(var(--percentage) * 1%), 
+                #ffcccc calc(var(--percentage) * 1%)
+            );
+            transition: background 1s linear;
+        }
+        
+        .timer-text {
+            position: relative;
+            font-size: 1.8em;
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .heart {
+            font-size: 3em;
+            color: #fff;
+            margin-top: 0.5em;
+            animation: pulse 1s infinite;
+        }
+
+        /* Surprise message hidden initially */
+        .surprise-message {
+            display: none;
+            font-size: 1.8em;
+            margin-top: 1em;
+            color: #ff4d4d;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s forwards;
+        }
+
+        /* Pulse animation for the heart */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Fade-in animation for the surprise */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Days Until Surprise Reveal ❤️</h1>
+    
+    <div class="countdown-container">
+        <div class="countdown-ring" id="ring" style="--percentage: 100;"></div>
+        <div class="timer-text" id="timerText">Loading...</div>
+    </div>
+    
+    <div class="heart">💖</div>
+    <div class="surprise-message" id="surpriseMessage">Surprise! It's Valentine's Day! And the surprise will be revealed soon... 💖</div>
+
+    <script>
+        // Set the target date
+        const targetDate = new Date('2025-02-14T00:00:00');
+        
+        // Update the countdown every second
+        const countdownInterval = setInterval(() => {
+            // Get the current date and time
+            const now = new Date();
+            
+            // Calculate the difference in seconds
+            const diffInSeconds = Math.floor((targetDate - now) / 1000);
+            
+            // If countdown is complete
+            if (diffInSeconds <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('timerText').textContent = "0";
+                
+                // Show the surprise message
+                document.getElementById('surpriseMessage').style.display = 'block';
+            } else {
+                // Calculate days
+                const days = Math.floor(diffInSeconds / (3600 * 24));
+                
+                // Display countdown timer as days only
+                document.getElementById('timerText').textContent = `${days}`;
+                
+                // Calculate percentage for the ring animation
+                const totalSeconds = Math.floor((targetDate - new Date(2024, 11, 6, 8, 20)) / 1000);
+                const percentage = ((totalSeconds - diffInSeconds) / totalSeconds) * 100;
+                document.getElementById('ring').style.setProperty('--percentage', percentage);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
