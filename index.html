@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Countdown</title>
+    <style>
+        /* Base styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            font-family: 'Arial', sans-serif;
+            color: #ff4d4d;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Timer container */
+        .countdown-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Timer circle background and animation */
+        .countdown-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff4d4d calc(var(--percentage) * 1%), 
+                #ffcccc calc(var(--percentage) * 1%)
+            );
+            transition: background 1s linear;
+        }
+        
+        .timer-text {
+            position: relative;
+            font-size: 1.8em;
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .heart {
+            font-size: 3em;
+            color: #fff;
+            margin-top: 0.5em;
+            animation: pulse 1s infinite;
+        }
+
+        .daily-message {
+            font-size: 1.5em;
+            margin-top: 1em;
+            color: #ff4d4d;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s forwards;
+        }
+
+        /* Pulse animation for the heart */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Fade-in animation for the daily message */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Days Until Surprise Reveal ❤️</h1>
+    
+    <div class="countdown-container">
+        <div class="countdown-ring" id="ring" style="--percentage: 100;"></div>
+        <div class="timer-text" id="timerText">Loading...</div>
+    </div>
+    
+    <div class="heart">💖</div>
+    <div class="daily-message" id="dailyMessage">Getting ready...</div>
+
+    <script>
+        // Define messages for each day until the surprise reveal
+        const messages = [
+            "Something simple, yet holds lots of love",
+            "Small but mighty, like our love in a single glance",
+            "It can be as light as air, or as grounding as earth",
+            "One piece, but it'll feel like many moments with me",
+            "My heart’s whisper, tucked into something tangible",
+            "Think of something that carries warmth, in more ways than one",
+            "It’s more than a gift—it’s a little love note from me",
+            "Something you’ll see every day, yet cherish each time",
+            "It captures my feelings, shaped by my hands",
+            "It’s tiny, but it's brimming with affection",
+            "Just as I want to hold you, this is meant to hold something close",
+            "It holds warmth and wonder, like my heart when I think of you",
+            "It’s not grand, but it’s made with a grand love",
+            "A piece of me, delicate but enduring",
+            "A daily companion, in a gentle and steady way",
+            "Imagine a gentle hug, from afar",
+            "The little things hold a lot of love",
+            "Imagine something that fits perfectly in your hands",
+            "Small in size, big in heart",
+            "Something that belongs to moments of calm",
+            "It’s something you can hold in both hands",
+            "To remind you of me, in quiet times",
+            "It holds both the ordinary and extraordinary",
+            "It’s small, but every time you see it, think of us",
+            "Crafted to hold something precious, like you do in my heart",
+            "Gentle and sturdy, like our love",
+            "A bridge between our worlds",
+            "Something simple but essential",
+            "There’s beauty in its smallness",
+            "Something to hold, like a thought of me",
+            "An essential, wrapped in something sentimental",
+            "It’s as small as a whisper, as warm as a hug",
+            "A bit of comfort, every single day",
+            "It’s not loud or flashy, but it’s unforgettable",
+            "It’s not what it is—it’s what it holds",
+            "Imagine something you could take with you, if I were there",
+            "A little reminder, tucked into something familiar",
+            "It’ll be there when you need it, just like me",
+            "Something that sits quietly but speaks volumes",
+            "A familiar shape, yet with my own touch",
+            "It’s always there, like my thoughts of you",
+            "This small thing speaks of big love",
+            "Somewhere you can pour love, and find it again",
+            "It holds space, much like you hold space for me",
+            "Meant to accompany you, but never in the way",
+            "It’s practical but full of meaning",
+            "Imagine something that feels like 'home'",
+            "When I can’t be there, let this stand in my place"
+        ];
+
+        // Function to get the query parameter by name
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Fetch target date from URL parameter, defaulting to Valentine's Day if not provided
+        const targetDateParam = getQueryParam('targetDate');
+        const targetDate = targetDateParam ? new Date(targetDateParam) : new Date('2025-02-14T00:00:00');
+
+        // Update the countdown every second
+        const countdownInterval = setInterval(() => {
+            const now = new Date();
+            const diffInSeconds = Math.floor((targetDate - now) / 1000);
+            
+            if (diffInSeconds <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('timerText').textContent = "0";
+                document.getElementById('dailyMessage').textContent = messages[0];  // Final message
+            } else {
+                const days = Math.floor(diffInSeconds / (3600 * 24));
+                document.getElementById('timerText').textContent = `${days}`;
+
+                // Display message based on days remaining
+                const messageIndex = Math.max(0, messages.length - days - 1); // Ensure index is within bounds
+                document.getElementById('dailyMessage').textContent = messages[messageIndex];
+
+                const totalSeconds = Math.floor((targetDate - new Date()) / 1000);
+                const percentage = ((totalSeconds - diffInSeconds) / totalSeconds) * 100;
+                document.getElementById('ring').style.setProperty('--percentage', percentage);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
