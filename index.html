@@ -27,7 +27,6 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
         }
         
-        /* Timer container */
         .countdown-container {
             position: relative;
             width: 180px;
@@ -40,7 +39,6 @@
             justify-content: center;
         }
 
-        /* Timer circle background and animation */
         .countdown-ring {
             position: absolute;
             width: 100%;
@@ -78,14 +76,12 @@
             animation: fadeIn 1s forwards;
         }
 
-        /* Pulse animation for the heart */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
 
-        /* Fade-in animation for the daily message */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -156,17 +152,14 @@
             "When I can’t be there, let this stand in my place"
         ];
 
-        // Function to get the query parameter by name
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        // Fetch target date from URL parameter, defaulting to Valentine's Day if not provided
         const targetDateParam = getQueryParam('targetDate');
         const targetDate = targetDateParam ? new Date(targetDateParam) : new Date('2025-02-14T00:00:00');
 
-        // Update the countdown every second
         const countdownInterval = setInterval(() => {
             const now = new Date();
             const diffInSeconds = Math.floor((targetDate - now) / 1000);
@@ -174,13 +167,12 @@
             if (diffInSeconds <= 0) {
                 clearInterval(countdownInterval);
                 document.getElementById('timerText').textContent = "0";
-                document.getElementById('dailyMessage').textContent = messages[0];  // Final message
+                document.getElementById('dailyMessage').textContent = messages[0];
             } else {
                 const days = Math.floor(diffInSeconds / (3600 * 24));
                 document.getElementById('timerText').textContent = `${days}`;
 
-                // Display message based on days remaining
-                const messageIndex = Math.max(0, messages.length - days - 1); // Ensure index is within bounds
+                const messageIndex = Math.max(0, messages.length - days - 1);
                 document.getElementById('dailyMessage').textContent = messages[messageIndex];
 
                 const totalSeconds = Math.floor((targetDate - new Date()) / 1000);
