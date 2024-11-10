@@ -160,12 +160,11 @@
         const targetDateParam = getQueryParam('targetDate');
         const targetDate = targetDateParam ? new Date(targetDateParam) : new Date('2025-02-14T00:00:00');
 
-        const countdownInterval = setInterval(() => {
+        function updateCountdown() {
             const now = new Date();
             const diffInSeconds = Math.floor((targetDate - now) / 1000);
             
             if (diffInSeconds <= 0) {
-                clearInterval(countdownInterval);
                 document.getElementById('timerText').textContent = "0";
                 document.getElementById('dailyMessage').textContent = messages[0];
             } else {
@@ -179,7 +178,17 @@
                 const percentage = ((totalSeconds - diffInSeconds) / totalSeconds) * 100;
                 document.getElementById('ring').style.setProperty('--percentage', percentage);
             }
-        }, 1000);
+        }
+
+        // Update countdown once immediately and then set an interval to update daily
+        updateCountdown();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);  // Set time to midnight for the next update
+        setTimeout(() => {
+            updateCountdown();
+            setInterval(updateCountdown, 24 * 60 * 60 * 1000);  // Repeat daily after that
+        }, midnight - new Date());
+
     </script>
 </body>
 </html>
